@@ -71,6 +71,46 @@ colnames(nd)<- c("steps", "date", "interval", "day", "DateTime")
 mergeData <- rbind(clean, nd)
 
 ## Question 7
+## Form a sum of steps per date to compare with step 1
 
+sumTable2 <- aggregate(mergeData$steps ~ mergeData$date, FUN=sum, )
+colnames(sumTable2)<- c("Date", "Steps")
+
+## Mean of Steps with NA data taken care of
+as.integer(mean(sumTable2$Steps))
+
+## Median of Steps with NA data taken care of
+as.integer(median(sumTable2$Steps))
+
+## Build the histogram of total steps per day, categorized by data set to show impact
+  hist(sumTable2$Steps, breaks=5, xlab="Steps", main = "Total Steps per Day with NAs Fixed", col="Black")
+  hist(sumTable$Steps, breaks=5, xlab="Steps", main = "Total Steps per Day with NAs Fixed", col="Grey", add=T)
+  legend("topright", c("Imputed Data", "Non-NA Data"), fill=c("black", "grey") )
+  
+## The new mean of the imputed data is 10821 steps compared to the old mean of 10766 steps. This equates a difference of 55 steps on average per day. The new median of the imputed data is 11015 steps compared to the old median of 10765 steps. This leads to a difference of 250 steps for the median. The overall shape of the distribution is consistent.
+  
+## Question 8
+  
+## Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+
+## Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day
+  
+## Create new category based on the days of the week
+  
+  mergeData$DayCategory <- ifelse(mergeData$day %in% c("Saturday", "Sunday"), "Weekend", "Weekday")
+  
+## Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis)
+  
+  library(lattice) 
+  
+## Summarize data by interval and type of day
+  
+  intervalTable2 <- ddply(mergeData, .(interval, DayCategory), summarize, Avg = mean(steps))
+  
+## Plot data in a panel plot 
+
+xyplot(Avg~interval|DayCategory, data=intervalTable2, type="l",  layout = c(1,2),
+         main="Average Steps per Interval Based on Type of Day", 
+         ylab="Average Number of Steps", xlab="Interval")
 
 
